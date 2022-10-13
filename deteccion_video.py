@@ -11,7 +11,6 @@ import torch
 from torch.autograd import Variable
 
 
-
 def Convertir_RGB(img):
     # Convertir Blue, green, red a Red, green, blue
     b = img[:, :, 0].copy()
@@ -66,12 +65,14 @@ if __name__ == "__main__":
     Tensor = torch.cuda.FloatTensor if torch.cuda.is_available() else torch.FloatTensor
     if opt.webcam==1:
         cap = cv2.VideoCapture(0)
-        out = cv2.VideoWriter('output.mp4',cv2.VideoWriter_fourcc('M','J','P','G'), 10, (1280,960))
+        fourcc = cv2.VideoWriter_fourcc(*'MPEG')
+        out = cv2.VideoWriter('output.mp4', fourcc, 10, (1280,960))
     else:
         cap = cv2.VideoCapture(opt.directorio_video)
         # frame_width = int(cap.get(3))
         # frame_height = int(cap.get(4))
-        out = cv2.VideoWriter('outp.mp4',cv2.VideoWriter_fourcc('M','J','P','G'), 10, (1280,960))
+        fourcc = cv2.VideoWriter_fourcc(*'MPEG')
+        out = cv2.VideoWriter('output.mp4', fourcc, 10, (1280,960))
     colors = np.random.randint(0, 255, size=(len(classes), 3), dtype="uint8")
     a=[]
     while cap:
@@ -101,9 +102,9 @@ if __name__ == "__main__":
                     box_h = y2 - y1
                     color = [int(c) for c in colors[int(cls_pred)]]
                     print("Se detectó {} en X1: {}, Y1: {}, X2: {}, Y2: {}".format(classes[int(cls_pred)], x1, y1, x2, y2))
-                    frame = cv2.rectangle(frame, (x1, y1 + box_h), (x2, y1), color, 5)
-                    cv2.putText(frame, classes[int(cls_pred)], (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 5)# Nombre de la clase detectada
-                    cv2.putText(frame, str("%.2f" % float(conf)), (x2, y2 - box_h), cv2.FONT_HERSHEY_SIMPLEX, 0.5,color, 5) # Certeza de prediccion de la clase
+                    frame = cv2.rectangle(frame, (int(x1), int(y1 + box_h)), (int(x2), int(y1)), color, 3)
+                    cv2.putText(frame, classes[int(cls_pred)], (int(x1), int(y1)), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)# Nombre de la clase detectada
+                    cv2.putText(frame, str("%.2f" % float(conf)), (int(x2), int(y2 - box_h)), cv2.FONT_HERSHEY_SIMPLEX, 0.5,color, 2) # Certeza de prediccion de la clase
         #
         #Convertimos de vuelta a BGR para que cv2 pueda desplegarlo en los colores correctos
         
